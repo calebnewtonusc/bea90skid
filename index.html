@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bea90skid</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #080608; color: #f0ece8; -webkit-font-smoothing: antialiased; }
+
+    /* Scroll-aware nav */
+    #navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 50; backdrop-filter: blur(12px); background: rgba(8,6,8,0.88); border-bottom: 1px solid rgba(255,255,255,0.07); transform: translateY(-100%); opacity: 0; transition: transform 0.3s ease, opacity 0.3s ease; }
+
+    /* VHS scanlines overlay */
+    .scanlines { background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px); pointer-events: none; }
+
+    /* CRT glow on text */
+    .crt-glow { text-shadow: 0 0 20px rgba(255,100,200,0.35), 0 0 60px rgba(100,150,255,0.2); }
+
+    /* Retro gradient hero bg */
+    .hero-bg { background: radial-gradient(ellipse at 20% 30%, rgba(180,80,220,0.18) 0%, transparent 55%), radial-gradient(ellipse at 80% 60%, rgba(60,120,255,0.14) 0%, transparent 55%), radial-gradient(ellipse at 50% 100%, rgba(255,80,120,0.1) 0%, transparent 45%), #080608; }
+
+    /* Dot grid */
+    .dot-grid { background-image: radial-gradient(circle, rgba(255,255,255,0.045) 1px, transparent 1px); background-size: 28px 28px; }
+
+    /* Reveal animation */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.65s cubic-bezier(0.16,1,0.3,1), transform 0.65s cubic-bezier(0.16,1,0.3,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* Memory card */
+    .memory-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); border-radius: 16px; transition: all 0.2s ease; cursor: pointer; }
+    .memory-card:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.18); transform: translateY(-2px); }
+
+    /* Retro badge */
+    .retro-badge { background: linear-gradient(135deg, rgba(180,80,220,0.18), rgba(60,120,255,0.14)); border: 1px solid rgba(180,80,220,0.3); }
+
+    /* Quiz button */
+    .quiz-btn { background: linear-gradient(135deg, #c840e0, #6060f0); border: none; transition: all 0.2s ease; }
+    .quiz-btn:hover { transform: scale(1.03); box-shadow: 0 12px 40px rgba(180,80,220,0.4); }
+    .quiz-btn:active { transform: scale(0.98); }
+
+    /* VHS tape texture card */
+    .vhs-card { background: rgba(20,10,30,0.8); border: 1px solid rgba(180,80,220,0.2); border-radius: 12px; }
+
+    /* Ticker */
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .ticker-track { animation: ticker 30s linear infinite; display: flex; white-space: nowrap; }
+    .ticker-track:hover { animation-play-state: paused; }
+
+    /* Blinking cursor */
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+    .cursor { animation: blink 1s ease infinite; }
+
+    /* Year number big display */
+    .year-display { font-size: clamp(80px, 20vw, 200px); font-weight: 900; letter-spacing: -0.04em; background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(180,80,220,0.7) 40%, rgba(60,120,255,0.6) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 0.9; }
+  </style>
+</head>
+<body>
+
+<!-- Scroll-aware nav -->
+<nav id="navbar">
+  <div style="max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;">
+    <span style="font-size:15px;font-weight:700;letter-spacing:-0.02em;color:#f0ece8;">bea90skid</span>
+    <div style="display:flex;gap:24px;align-items:center;">
+      <a href="#memories" style="font-size:13px;color:rgba(240,236,232,0.5);text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='#f0ece8'" onmouseout="this.style.color='rgba(240,236,232,0.5)'">Memories</a>
+      <a href="#quiz" style="font-size:13px;color:rgba(240,236,232,0.5);text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='#f0ece8'" onmouseout="this.style.color='rgba(240,236,232,0.5)'">Quiz</a>
+      <a href="#join" style="font-size:13px;font-weight:600;color:#f0ece8;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:6px 14px;text-decoration:none;transition:all 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.13)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">Join</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero-bg dot-grid scanlines" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px;position:relative;overflow:hidden;">
+  <!-- decorative blobs -->
+  <div style="position:absolute;top:10%;left:5%;width:300px;height:300px;background:radial-gradient(circle,rgba(180,80,220,0.12),transparent);border-radius:50%;pointer-events:none;"></div>
+  <div style="position:absolute;bottom:15%;right:5%;width:250px;height:250px;background:radial-gradient(circle,rgba(60,120,255,0.1),transparent);border-radius:50%;pointer-events:none;"></div>
+
+  <div class="retro-badge" style="display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:100px;margin-bottom:32px;">
+    <span style="width:6px;height:6px;background:#d070f0;border-radius:50%;box-shadow:0 0 8px #d070f0;"></span>
+    <span style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(240,236,232,0.7);">for real 90s kids only</span>
+  </div>
+
+  <div class="year-display">1990<span class="cursor" style="-webkit-text-fill-color:rgba(180,80,220,0.6);">s</span></div>
+
+  <p style="margin-top:24px;font-size:clamp(16px,3vw,22px);color:rgba(240,236,232,0.55);max-width:560px;line-height:1.6;">
+    Before social media. Before smartphones. Before you had to document everything just to prove you were there.
+  </p>
+
+  <div style="margin-top:48px;display:flex;gap:16px;flex-wrap:wrap;justify-content:center;">
+    <a href="#quiz" class="quiz-btn" style="display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:12px;font-size:15px;font-weight:600;color:white;text-decoration:none;cursor:pointer;">
+      Take the quiz
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a href="#memories" style="display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:12px;font-size:15px;font-weight:500;color:rgba(240,236,232,0.7);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);text-decoration:none;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">Relive the decade</a>
+  </div>
+
+  <!-- stat row -->
+  <div style="margin-top:72px;display:flex;gap:48px;flex-wrap:wrap;justify-content:center;">
+    <div style="text-align:center;">
+      <div style="font-size:32px;font-weight:800;letter-spacing:-0.03em;color:#f0ece8;">80M+</div>
+      <div style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(240,236,232,0.4);margin-top:4px;">millennials</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-size:32px;font-weight:800;letter-spacing:-0.03em;color:#f0ece8;">10 yrs</div>
+      <div style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(240,236,232,0.4);margin-top:4px;">of culture</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-size:32px;font-weight:800;letter-spacing:-0.03em;color:#f0ece8;">0</div>
+      <div style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(240,236,232,0.4);margin-top:4px;">algorithm</div>
+    </div>
+  </div>
+</section>
+
+<!-- Ticker -->
+<div style="overflow:hidden;background:rgba(180,80,220,0.1);border-top:1px solid rgba(180,80,220,0.2);border-bottom:1px solid rgba(180,80,220,0.2);padding:14px 0;">
+  <div class="ticker-track" style="gap:48px;">
+    <span style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(240,236,232,0.5);">Blockbuster nights</span>
+    <span style="color:rgba(180,80,220,0.6);">&#9670;</span>
+    <span style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(240,236,232,0.5);">MapQuest printouts</span>
+    <span style="color:rgba(180,80,220,0.6);">&#9670;</span>
+    <span style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(240,236,232,0.5);">Disposable cameras</span>
+    <span style="color:rgba(180,80,220,0.6);">&#9670;</span>
+    <span style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(240,236,232,0.5);">Moviefone</span>
+    <span style="color:rgba(180,80,220,0.6);">&#9670;</span>
+    <span style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(240,236,232,0.5);">See-through Gameboy</span>
+    <span style="color:rgba(180,80,220,0.6);">&#9670;</span>
+    <span style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(240,236,232,0.5);">TV Guide channel</span>
+    <span style="color:rgba(180,80,220,0.6);">&#9670;</span>
+    <span style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(240,236,232,0.5);">Payphones everywhere</span>
+    <span style="color:rgba(180,80,220,0.6);">&#9670;</span>
+    <span style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(240,236,232,0.5);">Answering the phone blind</span>
+    <span style="color:rgba(180,80,220,0.6);">&#9670;</span>
+    <!-- duplicate for seamless loop -->
+    <span style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(240,236,232,0.5);">Blockbuster nights</span>
+    <span style="color:rgba(180,80,220,0.6);">&#9670;</span>
+    <span style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(240,236,232,0.5);">MapQuest printouts</span>
+    <span style="color:rgba(180,80,220,0.6);">&#9670;</span>
+    <span style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(240,236,232,0.5);">Disposable cameras</span>
+    <span style="color:rgba(180,80,220,0.6);">&#9670;</span>
+    <span style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(240,236,232,0.5);">Moviefone</span>
+    <span style="color:rgba(180,80,220,0.6);">&#9670;</span>
+    <span style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(240,236,232,0.5);">See-through Gameboy</span>
+    <span style="color:rgba(180,80,220,0.6);">&#9670;</span>
+    <span style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(240,236,232,0.5);">TV Guide channel</span>
+    <span style="color:rgba(180,80,220,0.6);">&#9670;</span>
+    <span style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(240,236,232,0.5);">Payphones everywhere</span>
+    <span style="color:rgba(180,80,220,0.6);">&#9670;</span>
+    <span style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(240,236,232,0.5);">Answering the phone blind</span>
+    <span style="color:rgba(180,80,220,0.6);">&#9670;</span>
+  </div>
+</div>
+
+<!-- Memories grid -->
+<section id="memories" style="max-width:1200px;margin:0 auto;padding:96px 24px;">
+  <div class="reveal" style="margin-bottom:56px;">
+    <p style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(180,80,220,0.7);margin-bottom:12px;">the memories</p>
+    <h2 style="font-size:clamp(28px,5vw,48px);font-weight:800;letter-spacing:-0.03em;line-height:1.1;">Things that were normal.<br><span style="color:rgba(240,236,232,0.4);">Now basically extinct.</span></h2>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;">
+
+    <div class="memory-card reveal reveal-delay-1" style="padding:24px;">
+      <div style="font-size:32px;margin-bottom:14px;">&#9992;</div>
+      <h3 style="font-size:15px;font-weight:600;margin-bottom:8px;color:#f0ece8;">Airport gate greetings</h3>
+      <p style="font-size:13px;line-height:1.65;color:rgba(240,236,232,0.5);">You walked all the way to the gate to meet someone coming off the plane. No security. No distance. Just showing up for people.</p>
+    </div>
+
+    <div class="memory-card reveal reveal-delay-2" style="padding:24px;">
+      <div style="font-size:32px;margin-bottom:14px;">&#128247;</div>
+      <h3 style="font-size:15px;font-weight:600;margin-bottom:8px;color:#f0ece8;">Blurry disposable photos</h3>
+      <p style="font-size:13px;line-height:1.65;color:rgba(240,236,232,0.5);">You waited a full week to see that selfie. Then it was blurry, or someone's eyes were closed. And you kept it anyway.</p>
+    </div>
+
+    <div class="memory-card reveal reveal-delay-3" style="padding:24px;">
+      <div style="font-size:32px;margin-bottom:14px;">&#128506;</div>
+      <h3 style="font-size:15px;font-weight:600;margin-bottom:8px;color:#f0ece8;">MapQuest directions</h3>
+      <p style="font-size:13px;line-height:1.65;color:rgba(240,236,232,0.5);">Print it out, pray you don't miss a turn. No recalculating. No second chances. Just you, a piece of paper, and pure hope.</p>
+    </div>
+
+    <div class="memory-card reveal reveal-delay-1" style="padding:24px;">
+      <div style="font-size:32px;margin-bottom:14px;">&#127916;</div>
+      <h3 style="font-size:15px;font-weight:600;margin-bottom:8px;color:#f0ece8;">Blockbuster Friday</h3>
+      <p style="font-size:13px;line-height:1.65;color:rgba(240,236,232,0.5);">Browsing for a movie by holding the box was better than anything on Netflix. A random one from across the store could change your life.</p>
+    </div>
+
+    <div class="memory-card reveal reveal-delay-2" style="padding:24px;">
+      <div style="font-size:32px;margin-bottom:14px;">&#128222;</div>
+      <h3 style="font-size:15px;font-weight:600;margin-bottom:8px;color:#f0ece8;">Answering the phone blind</h3>
+      <p style="font-size:13px;line-height:1.65;color:rgba(240,236,232,0.5);">You picked up without knowing who was calling. Every call was a small adventure. And you talked to their parents first.</p>
+    </div>
+
+    <div class="memory-card reveal reveal-delay-3" style="padding:24px;">
+      <div style="font-size:32px;margin-bottom:14px;">&#128250;</div>
+      <h3 style="font-size:15px;font-weight:600;margin-bottom:8px;color:#f0ece8;">Catch it live or miss it</h3>
+      <p style="font-size:13px;line-height:1.65;color:rgba(240,236,232,0.5);">Your show aired at 8pm. Be there or don't see it. The stakes made every episode feel like an event.</p>
+    </div>
+
+    <div class="memory-card reveal reveal-delay-1" style="padding:24px;">
+      <div style="font-size:32px;margin-bottom:14px;">&#128125;</div>
+      <h3 style="font-size:15px;font-weight:600;margin-bottom:8px;color:#f0ece8;">See-through Gameboy</h3>
+      <p style="font-size:13px;line-height:1.65;color:rgba(240,236,232,0.5);">The purple translucent shell. The way you could see the circuit board. That hit different in a way nothing designed today can explain.</p>
+    </div>
+
+    <div class="memory-card reveal reveal-delay-2" style="padding:24px;">
+      <div style="font-size:32px;margin-bottom:14px;">&#128683;</div>
+      <h3 style="font-size:15px;font-weight:600;margin-bottom:8px;color:#f0ece8;">Life was undocumented</h3>
+      <p style="font-size:13px;line-height:1.65;color:rgba(240,236,232,0.5);">You did dumb stuff and only your friends knew. Nothing lived online forever. You were allowed to just exist.</p>
+    </div>
+
+    <div class="memory-card reveal reveal-delay-3" style="padding:24px;">
+      <div style="font-size:32px;margin-bottom:14px;">&#128184;</div>
+      <h3 style="font-size:15px;font-weight:600;margin-bottom:8px;color:#f0ece8;">Long-distance calls</h3>
+      <p style="font-size:13px;line-height:1.65;color:rgba(240,236,232,0.5);">The next town over cost extra. You saved phone calls for things that really mattered because they literally had a price.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- Quiz teaser -->
+<section id="quiz" style="padding:96px 24px;background:radial-gradient(ellipse at center,rgba(180,80,220,0.1) 0%,transparent 70%),rgba(255,255,255,0.02);">
+  <div style="max-width:640px;margin:0 auto;text-align:center;">
+    <div class="reveal">
+      <div class="vhs-card" style="padding:48px 40px;">
+        <div style="display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;background:rgba(180,80,220,0.12);border:1px solid rgba(180,80,220,0.25);border-radius:14px;margin-bottom:24px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(200,100,240,0.8)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <h2 style="font-size:clamp(22px,4vw,34px);font-weight:800;letter-spacing:-0.03em;line-height:1.2;margin-bottom:16px;">How 90s are you, really?</h2>
+        <p style="font-size:14px;line-height:1.7;color:rgba(240,236,232,0.5);margin-bottom:32px;">23 questions. No cheating. Find out if you're a true 90s kid or just someone who watched Stranger Things and started wearing scrunchies.</p>
+
+        <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:32px;text-align:left;">
+          <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid rgba(255,255,255,0.07);">
+            <span style="width:8px;height:8px;background:#d070f0;border-radius:50%;flex-shrink:0;"></span>
+            <span style="font-size:13px;color:rgba(240,236,232,0.7);">Did you call Moviefone for showtimes?</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid rgba(255,255,255,0.07);">
+            <span style="width:8px;height:8px;background:#6060f0;border-radius:50%;flex-shrink:0;"></span>
+            <span style="font-size:13px;color:rgba(240,236,232,0.7);">Have you ever shouted "you've got mail"?</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid rgba(255,255,255,0.07);">
+            <span style="width:8px;height:8px;background:#f060a0;border-radius:50%;flex-shrink:0;"></span>
+            <span style="font-size:13px;color:rgba(240,236,232,0.7);">Were you in a Top 8 drama on MySpace?</span>
+          </div>
+        </div>
+
+        <button id="quiz-start" class="quiz-btn" style="width:100%;padding:16px;border-radius:12px;font-size:15px;font-weight:600;color:white;cursor:pointer;border:none;">
+          Start the quiz
+        </button>
+        <p style="font-size:11px;color:rgba(240,236,232,0.3);margin-top:12px;">Takes 3 minutes. No signup required.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Join section -->
+<section id="join" style="max-width:720px;margin:0 auto;padding:96px 24px;text-align:center;">
+  <div class="reveal">
+    <p style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(180,80,220,0.7);margin-bottom:12px;">join the community</p>
+    <h2 style="font-size:clamp(28px,5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.1;margin-bottom:16px;">This is for people who were actually there.</h2>
+    <p style="font-size:15px;line-height:1.7;color:rgba(240,236,232,0.45);margin-bottom:40px;max-width:480px;margin-left:auto;margin-right:auto;">No algorithmic feed. No infinite scroll. Just a community that moves at the pace the decade you grew up in actually moved.</p>
+
+    <form style="display:flex;gap:12px;max-width:400px;margin:0 auto;flex-wrap:wrap;" onsubmit="handleJoin(event)">
+      <input type="email" placeholder="Your email" style="flex:1;min-width:200px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:14px 16px;font-size:14px;color:#f0ece8;font-family:'Inter',sans-serif;outline:none;" onfocus="this.style.borderColor='rgba(180,80,220,0.5)'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'" />
+      <button type="submit" class="quiz-btn" style="padding:14px 24px;border-radius:10px;font-size:14px;font-weight:600;color:white;cursor:pointer;white-space:nowrap;border:none;">Get early access</button>
+    </form>
+    <div id="join-thanks" style="display:none;margin-top:16px;font-size:13px;color:rgba(180,80,220,0.7);">You're in. We'll be in touch before launch.</div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer style="border-top:1px solid rgba(255,255,255,0.07);padding:32px 24px;text-align:center;">
+  <p style="font-size:12px;color:rgba(240,236,232,0.25);letter-spacing:0.06em;">bea90skid &mdash; for the ones who were actually there &mdash; 2026</p>
+</footer>
+
+<script>
+  // Scroll-aware nav
+  (function() {
+    var nav = document.getElementById('navbar');
+    window.addEventListener('scroll', function() {
+      var scrollY = window.scrollY;
+      var nearBottom = scrollY + window.innerHeight >= document.documentElement.scrollHeight - 200;
+      var visible = scrollY > 80 && !nearBottom;
+      nav.style.transform = visible ? 'translateY(0)' : 'translateY(-100%)';
+      nav.style.opacity = visible ? '1' : '0';
+    }, { passive: true });
+  })();
+
+  // Intersection observer for reveals
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
+
+  // Quiz button
+  document.getElementById('quiz-start').addEventListener('click', function() {
+    this.textContent = 'Coming soon. Sign up above to get early access.';
+    this.style.background = 'rgba(255,255,255,0.06)';
+    this.style.border = '1px solid rgba(255,255,255,0.1)';
+    this.style.fontSize = '13px';
+  });
+
+  // Join form
+  function handleJoin(e) {
+    e.preventDefault();
+    document.getElementById('join-thanks').style.display = 'block';
+    e.target.style.display = 'none';
+  }
+</script>
+</body>
+</html>
